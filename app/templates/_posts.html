@@ -1,0 +1,72 @@
+<ul class="posts">
+    {% if show_more != False %}
+        <div class="tz-gallery">
+            <div class="row">
+
+                {% for file in userfiles %}
+                    <div class="col-sm-6 col-md-4">
+                        <div class="thumbnail">
+                            <a class="lightbox"
+                               href="{{ url_for('main.post', image_id=file.id, author_id=file.author_id) }}">
+                                <img src="{{ file.thumbnail_url }}"
+                                     onerror="{{ url_for("static", filename="images/not-found-image.jpg") }}">
+                            </a>
+                            <div class="caption d-flex justify-content-center">
+                                <p align="center">{{ file.title | safe |
+                            striptags|truncate(length=500, killwords=False,
+                            end="......") }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+            {% else %}
+            {% for file in posts %}
+                <div class=" mx-auto">
+                    <div class="thumbnail">
+                        <a class="lightbox">
+                            <img src="{{ file.original_url }}" class="img-fluid center"
+                                 onerror="this.src='https://source.unsplash.com/pWkk7iiCoDM/400x300';">
+                        </a>
+                        <div class="caption d-flex justify-content-center">
+                            <p align="center">{{ file.title | safe |
+                        striptags|truncate(length=500, killwords=False,
+                        end="......") }}</p>
+                        </div>
+
+                    </div>
+                </div>
+                </div>
+
+
+                <li class="single post">
+                    <div style="margin-left: 50px; margin-right: 50px">
+                        <div class="post-thumbnail">
+                            <a href="{{ url_for('main.user', username=file.username) }}">
+                                <img class="img-rounded profile-thumbnail"
+                                     src="{{ file.image_url }}">
+                            </a>
+                        </div>
+
+                        <div class="post-content">
+                            <div class="post-author"><strong><a class="userLink"
+                                                                href="{{ url_for('main.user', username=file.username) }}">{{ file.username }}</a></strong>&nbsp;&nbsp;&nbsp;<strong
+                                    style="color:#999">·</strong>&nbsp;
+                            </div>
+                            <div class="post-date"><strong>
+                                {{ moment(file.timestamp).format('LL') }}</strong></div>
+                            <div class="post-footer">
+                                <div class="post-footer-right">
+                                    <a class="post-comment"
+                                       href="{{ url_for('main.post',  image_id=file.id, author_id=file.author_id) }}#comments">
+                                        <span class="label label-primary">{{ comments | length }} comments</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+    {% endif %}
+</ul>

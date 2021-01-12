@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% from "_macros.html" import render_field,
+render_submit_field %}
+{% import "_macros.html" as macros with context %}
+
+
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block entire_content %}
+    <header class="masthead">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="site-heading">
+                    <h1>Filestagram</h1>
+                    <span class="subheading">An elegant file sharing and social media platform</span>
+                </div>
+            </div>
+        </div>
+    </header>
+{% endblock %}
+
+{% block page_content %}
+    <h2>Share your thoughts</h2>
+            <form class="form" method="POST" enctype="multipart/form-data">
+
+
+
+<div class="container">
+<div class="col-md-12">
+    <div class="form-group">
+        <label>Upload Image</label>
+        <div class="input-group">
+            <span class="input-group-btn">
+                <span class="btn btn-default btn-file">
+                    Browse…
+    <label for="{{ form.file.id }}" class="control-label"></label>
+        {{ form.file(class="form-control", id="imgInp") }}
+                </span>
+            </span>
+            <input type="text" class="form-control" readonly>
+        </div>
+        <img id='img-upload'/>
+    </div>
+</div>
+<div class="col-md-12">
+        {% for error in form.file.errors %}
+            <small style="color: firebrick;">[{{ error }}]</small><br>
+        {% endfor %}
+</div>
+</div>
+
+
+
+
+
+    <hr style="margin-right: 50px; margin-left: 50px">
+    <div class="post-container" style="margin: 100px; margin-top: 45px">
+        <div class="post-thumbnail">
+            <a href="{{ url_for('main.user', username=current_user.username) }}">
+                <img class="img-rounded profile-thumbnail" src="{{ current_user.image_url }}" onerror="this.src='{{ current_user.avatar(128) }}';">
+            </a>
+        </div>
+        <div class="timeline-comment">
+{#            <form class="form" method="POST" enctype="multipart/form-data">#}
+                {{ form.hidden_tag() }}
+
+
+
+
+
+
+                <div id="exTab2" >
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a  href="#1" data-toggle="tab"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</a>
+                        </li>
+                        <li>
+                            <a href="#2" data-toggle="tab"><i class="fa fa-eye" aria-hidden="true"></i> Preview</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content ">
+                        <div class="tab-pane active" id="1">
+                            <div  class="form-group ">
+                                {{ form.body(class="form-control",required='required',only_input=True, rows=10) }}
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="2">
+                            <div  class="form-group ">
+                                {{ form.body(only_preview=True) }}
+                            </div>
+                        </div>
+                        <div class="comment-markdown">
+                            <a class="tabnav-extra" href="https://guides.github.com/features/mastering-markdown/" target="_blank" data-ga-click="Markdown Toolbar, click, help">
+                                <svg aria-hidden="true" class="octicon octicon-markdown v-align-bottom" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M14.85 3H1.15C.52 3 0 3.52 0 4.15v7.69C0 12.48.52 13 1.15 13h13.69c.64 0 1.15-.52 1.15-1.15v-7.7C16 3.52 15.48 3 14.85 3zM9 11H7V8L5.5 9.92 4 8v3H2V5h2l1.5 2L7 5h2v6zm2.99.5L9.5 8H11V5h2v3h1.5l-2.51 3.5z"></path></svg>
+                                Styling with Markdown is supported
+                            </a>
+                        </div>
+                        <div  class="comment-submit">
+                            {{ wtf.form_field(form.submit,class="btn btn-success btn-block",id="comment_submit")}}
+                            <div style="clear:both"></div>
+                        </div>
+                    </div>
+                </div>
+{#            </form>#}
+        </div>
+    </div>            </form>
+
+
+    {#<form method="POST" enctype="multipart/form-data">#}
+    {#    {{ form.hidden_tag() }}#}
+
+
+
+
+    {#    <label for="{{ form.file.id }}" class="control-label">File</label>#}
+    {#    {{ form.file(class="form-control", id="file") }}#}
+    {#    {% for error in form.file.errors %}#}
+    {#        <small style="color: firebrick;">[{{ error }}]</small><br>#}
+    {#    {% endfor %}#}
+    {##}
+    {#    <label for="{{ form.title.id }}" class="control-label">Description</label>#}
+    {#    {{ form.title(class="form-control", id="title") }}#}
+    {#    {% for error in form.title.errors %}#}
+    {#        <small style="color: firebrick;">[{{ error }}]</small><br>#}
+    {#    {% endfor %}#}
+
+
+    {##}
+    {#    {{ form.submit(class="btn btn-primary") }}#}
+
+    {#    -----------------------------------------------#}
+
+
+    {#    {% for field in form %}#}
+    {#        {% if not field.flags.hidden %}#}
+    {#            {% if field.type=='SubmitField' %}#}
+    {#                {{ render_submit_field(field, tabindex=loop.index*10) }}#}
+    {#            {% else %}#}
+    {#                {{ render_field(field, tabindex=loop.index*10) }}#}
+    {#            {% endif %}#}
+    {#        {% endif %}#}
+    {#    {% endfor %}#}
+
+
+
+
+
+{% endblock%}
+
+{% block scripts %}
+    {{ super() }}
+    <script type="text/javascript"  src="{{ url_for("static", filename="js/Markdown.Converter.min.js") }}"></script>
+    <script type="text/javascript" src="{{ url_for("static", filename="js/Markdown.Sanitizer.min.js") }}"></script>
+
+    <!--
+
+    <script type="text/javascript">
+        window.onload = function () {
+            document.getElementsByClassName("post-body")[0].style.maxHeight = "none";
+
+            //$(".post-body").css("max-height","none");
+        };
+    -->
+    {#</script>#}
+
+    <script>
+
+    $(document).ready( function() {
+    	$(document).on('change', '.btn-file :file', function() {
+		var input = $(this),
+			label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+		input.trigger('fileselect', [label]);
+		});
+
+		$('.btn-file :file').on('fileselect', function(event, label) {
+
+		    var input = $(this).parents('.input-group').find(':text'),
+		        log = label;
+
+		    if( input.length ) {
+		        input.val(log);
+		    } else {
+		        if( log ) alert(log);
+		    }
+
+		});
+		function readURL(input) {
+		    if (input.files && input.files[0]) {
+		        var reader = new FileReader();
+
+		        reader.onload = function (e) {
+		            $('#img-upload').attr('src', e.target.result);
+		        }
+
+		        reader.readAsDataURL(input.files[0]);
+		    }
+		}
+
+		$("#imgInp").change(function(){
+		    readURL(this);
+		});
+	});
+
+    </script>
+{% endblock %}
+

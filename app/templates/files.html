@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros with context %}
+
+{% block entire_content %}
+    <header class="masthead">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="site-heading">
+                    <h1>Filestagram</h1>
+                    <span class="subheading">An elegant file sharing and social media platform</span>
+                </div>
+            </div>
+        </div>
+    </header>
+{% endblock %}
+
+{% block page_content %}
+    <h4>Search Filename</h4>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+
+        <div class="form-inline">
+            <div class="form-group">
+                {{ form.query(class="form-control", value=query) }}
+            </div>
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+
+
+    <table class="table table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">File Name</th>
+            <th scope="col">Upload Time</th>
+            <th scope="col">Download Link</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for file in files %}
+            <tr>
+                <th scope="row">{{ loop.index + (pagination.page - 1) * pagination.per_page }}</th>
+                <td>
+                    <a href={{ url_for("main.file", file_id = file.id) }}>
+                        {{ file.original_filename }}
+                    </a>
+                </td>
+                <td>{{ moment(file.timestamp).format('LLL') }}</td>
+                <td><a href="{{ file.link }}" class="list-group-item list-group-item-success">Click to Download
+                </a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+
+    {% if pagination %}
+        <div class="pagination">
+            {% if query %}
+                {{ macros.pagination_widget(pagination, 'main.files', query = query) }}
+            {% else %}
+                {{ macros.pagination_widget(pagination, 'main.files') }}
+            {% endif %}
+        </div>
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros with context %}
+
+{% block entire_content %}
+    <header class="masthead">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="site-heading">
+                    <h1>Filestagram</h1>
+                    <span class="subheading">An elegant file sharing and social media platform</span>
+                </div>
+            </div>
+        </div>
+    </header>
+{% endblock %}
+
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+
+        const copyURLtoClipboard = str => {
+            const el = document.createElement('textarea');
+            el.value = str;
+            el.setAttribute('readonly', '');
+            el.style.position = 'absolute';
+            el.style.left = '-9999px';
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+        };
+
+        const copywgetCommnadtoClipboard = str => {
+            const el = document.createElement('textarea');
+            el.value = "wget " + '"' + str + '"' + " -O " + " {{ file.original_filename }}";
+            el.setAttribute('readonly', '');
+            el.style.position = 'absolute';
+            el.style.left = '-9999px';
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+        };
+
+        const copyculrCommandtoClipboard = str => {
+            const el = document.createElement('textarea');
+            el.value = "curl " + '"' + str + '"' + " --output " + " {{ file.original_filename }}";
+            el.setAttribute('readonly', '');
+            el.style.position = 'absolute';
+            el.style.left = '-9999px';
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+        };
+
+    </script>
+{% endblock %}
+
+{% block page_content %}
+    <div class="container-fluid">
+        <h3>Download Link</h3>
+
+
+        <div class="list-group">
+
+            <a href="{{ file.link }}" class="list-group-item list-group-item-success"><span
+                    class="badge alert-success pull-right">Click to Download</span>{{ file.original_filename }}
+            </a>
+        </div>
+
+        <div class="row">
+
+            <div class="col-sm-4">
+                <button class="btn btn-primary btn-lg " onclick=copyURLtoClipboard("{{ file.link }}")>
+                    Copy
+                    url to Clipboard
+                </button>
+            </div>
+            <div class="col-sm-4">
+                <button class="btn btn-primary btn-lg"
+                        onclick=copywgetCommnadtoClipboard("{{ file.link }}")>
+                    Copy
+                    wget Command to Clipboard
+                </button>
+            </div>
+            <div class="col-sm-4">
+                <button class="btn btn-primary btn-lg"
+                        onclick=copyculrCommandtoClipboard("{{ file.link }}")>
+                    Copy
+                    curl Command to Clipboard
+                </button>
+            </div>
+        </div>
+
+
+    </div>
+
+{% endblock %}

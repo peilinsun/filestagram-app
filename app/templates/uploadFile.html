@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% from "_macros.html" import render_field,
+render_submit_field %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <script>
+        +function ($) {
+            'use strict';
+
+            // UPLOAD CLASS DEFINITION
+            // ======================
+
+            var dropZone = document.getElementById('drop-zone');
+            var uploadForm = document.getElementById('js-upload-form');
+
+            var startUpload = function (files) {
+                {#console.log(files)#}
+                {##}
+                {#let formData = new FormData();#}
+                {##}
+                {#formData.append("file", files);#}
+                {##}
+                {#fetch('/upload_file', {method: "POST", body: formData});#}
+            }
+
+            uploadForm.addEventListener('submit', function (e) {
+                console.log("Submitting ")
+            });
+
+            dropZone.ondrop = function (e) {
+                e.preventDefault();
+                this.className = 'upload-drop-zone';
+                document.getElementById('js-upload-file').files = e.dataTransfer.files;
+                {#startUpload(e.dataTransfer.files)#}
+            }
+
+            dropZone.ondragover = function () {
+                this.className = 'upload-drop-zone drop';
+                return false;
+            }
+
+            dropZone.ondragleave = function () {
+                this.className = 'upload-drop-zone';
+                return false;
+            }
+
+        }(jQuery);
+
+        {% if data %}
+            const copyURLtoClipboard = str => {
+                const el = document.createElement('textarea');
+                el.value = str;
+                el.setAttribute('readonly', '');
+                el.style.position = 'absolute';
+                el.style.left = '-9999px';
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+            };
+
+            const copywgetCommnadtoClipboard = str => {
+                const el = document.createElement('textarea');
+                el.value = "wget " + '"' + str + '"' + " -O " + " {{ data["name"] }}";
+                el.setAttribute('readonly', '');
+                el.style.position = 'absolute';
+                el.style.left = '-9999px';
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+            };
+
+            const copyculrCommandtoClipboard = str => {
+                const el = document.createElement('textarea');
+                el.value = "curl " + '"' + str + '"' + " --output " + " {{ data["name"] }}";
+                el.setAttribute('readonly', '');
+                el.style.position = 'absolute';
+                el.style.left = '-9999px';
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+            };
+
+        {% endif %}
+    </script>
+{% endblock %}
+
+{% block entire_content %}
+    <header class="masthead">
+        <div class="overlay"></div>
+
+        <div class="row">
+            <div class="site-heading">
+                <h1>Filestagram</h1>
+                <span class="subheading">An elegant file sharing and social media platform</span>
+            </div>
+        </div>
+
+    </header>
+{% endblock %}
+
+{% block page_content %}
+    <div class="panel panel-default">
+        <div class="panel-heading"><strong>Upload Files</strong> <small>Share your file to everywhere.</small></div>
+        <div class="panel-body">
+
+            <!-- Standar Form -->
+            <h4>Select files from your computer</h4>
+            <form action="" method="post" enctype="multipart/form-data" id="js-upload-form">
+                {{ form.hidden_tag() }}
+
+                <div class="form-inline">
+                    <div class="form-group">
+                        {{ form.file(class="form-control", id="js-upload-file") }}
+                    </div>
+                    {{ form.submit(class="btn btn-primary", id="js-upload-submit") }}
+                </div>
+            </form>
+
+            <!-- Drop Zone -->
+            <h4>Or drag and drop files below</h4>
+            <div class="upload-drop-zone" id="drop-zone">
+                Just drag and drop files here
+            </div>
+
+
+            <!-- Upload Finished -->
+            {% if data %}
+
+                <div class="js-upload-finished">
+                    <h3>Download Link</h3>
+
+                    {% if alert %}
+                        <div class="alert alert-danger " role="alert">
+                            You are anonymous user, your file link will expire in 1 hour and lose.
+                        </div>
+                    {% endif %}
+
+                    <div class="list-group">
+
+                        <a href="{{ data['link'] }}" class="list-group-item list-group-item-success"><span
+                                class="badge alert-success pull-right">Click to Download</span>{{ data['name'] }}
+                        </a>
+                    </div>
+
+                        <div class="row">
+
+                            <div class="col-sm-4">
+                                <button class="btn btn-primary btn-lg " onclick=copyURLtoClipboard("{{ data['link'] }}")>
+                                    Copy
+                                    url to Clipboard
+                                </button>
+                            </div>
+                            <div class="col-sm-4">
+                                <button class="btn btn-primary btn-lg"
+                                        onclick=copywgetCommnadtoClipboard("{{ data['link'] }}")>
+                                    Copy
+                                    wget Command to Clipboard
+                                </button>
+                            </div>
+                            <div class="col-sm-4">
+                                <button class="btn btn-primary btn-lg"
+                                        onclick=copyculrCommandtoClipboard("{{ data['link'] }}")>
+                                    Copy
+                                    curl Command to Clipboard
+                                </button>
+                            </div>
+                        </div>
+
+
+
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+{% endblock %}
